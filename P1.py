@@ -1,3 +1,4 @@
+from tkinter import N
 from gurobipy import GRB, Model, quicksum
 import random
 
@@ -56,29 +57,32 @@ m.addConstrs(sum(x[i,j,h,k] for i in N_) <= 1 for j in J_ for h in D_ for k in K
 m.addConstrs(y[i,j,h,k] <= t[i,j]*x[i,j,h,k] for j in M_ for i in N_ for k in K_ for h in D_)
 
 #R3
-m.addConstrs(sum(f[i,k,e] for e in range(1,exp[i])) for i in N_ for k in K_)
+m.addConstrs(sum(f[i,k,e] for e in range(1,exp[i])) == d[i,k] for i in N_ for k in K_)
 
 #R4
 m.addConstrs(z[i,k,e] == z[i,k-1,e+1] - f[i,k,e] for i in N_sin_P for e in range(1,exp[i]) for k in range(2,K+1))
 
 #R5
-
+m.addConstrs(z[i,k,exp[i]] == sum(y[i,j,h,k] for j in M_ for h in D_) - f[i,k,exp[i]] for i in N_sin_P for k in K_ )
 
 #R6
-
+m.addConstrs(sum(r[p,e] for e in range(1,exp[p])) == Q[p] for p in P)
 
 #R7
-
+m.addConstrs(z[p,k,e] == z[p,k-1,e+1] - f[p,k,e] - r[p,e] for p in P for e in range(1,exp[p]) for k in range(2,K+1))
 
 #R8
-
+m.addConstrs(z[p,k,exp[p]] == sum(y[p,j,h,k] for j in M_ for h in D_) - f[p,k,exp[p]] - r[p,exp[p]] for p in P for k in K_)
 
 #R9
-
+m.addConstrs(z[i,1,e] == 0 for i in N_ for e in range(1,exp[i]))
 
 #R10
+m.addConstrs(x[i,j,h,k] <= y[i,j,h,k] for i in N_ for j in M_ for h in D_ for k in K_)
 
-
+#Llamar a la optimizacion
+m.update()
+m.optimize()
 
 #Imprimir Valor Objetivo
 

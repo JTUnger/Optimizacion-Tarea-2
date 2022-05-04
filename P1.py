@@ -53,10 +53,10 @@ m.setObjective(objetivo, GRB.MAXIMIZE)
 m.addConstrs(sum(x[i,j,h,k] for i in N_) <= 1 for j in J_ for h in D_ for k in K_)
 
 #R2
-
+m.addConstrs(y[i,j,h,k] <= t[i,j]*x[i,j,h,k] for j in M_ for i in N_ for k in K_ for h in D_)
 
 #R3
-
+m.addConstrs(sum(f[i,k,e] for e in range(1,exp[i])) for i in N_ for k in K_)
 
 #R4
 m.addConstrs(z[i,k,e] == z[i,k-1,e+1] - f[i,k,e] for i in N_sin_P for e in range(1,exp[i]) for k in range(2,K+1))

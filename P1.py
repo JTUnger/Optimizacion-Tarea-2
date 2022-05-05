@@ -38,10 +38,10 @@ m = Model()
 
 #Variables
 x = m.addVars(N_,M_,D_,K_, vtype = GRB.BINARY)
-f = m.addVars(N_,K_,exp) #JTU: No estoy seguro si hay que especificar que son enteros con vtype=
-z = m.addVars(N_,K_,exp)
-r = m.addVars(N_,exp)
-y = m.addVars(N_,M_,D_,K_)
+f = m.addVars(N_,K_,exp, vtype = GRB.INTEGER)
+z = m.addVars(N_,K_,exp, vtype = GRB.INTEGER)
+r = m.addVars(N_,exp, vtype = GRB.INTEGER)
+y = m.addVars(N_,M_,D_,K_, vtype = GRB.INTEGER)
 m.update()
 
 #Función Objetivo
@@ -85,5 +85,16 @@ m.update()
 m.optimize()
 
 #Imprimir Valor Objetivo
-
+print("\n **SOLUCIONES** \n")
+print(f"Valor de la funcion objetivo: {m.ObjVal}")
+for k in K_: #Loop dia
+    #Demanda y produccion del dia
+    print(f"\n Resumen del dia {k} \n")
+    for h in D_: #Loop hora
+        for i in N_: #Loop producto
+            for j in M_: #loop trabajadores
+                if x[i,j,h,k].x == 1:
+                    print(f"El trabajador {j} en la hora {h} del dia {k} TRABAJO y elaboro {y[i,j,h,k].x} unidades de producto {i}")
+                if x[i,j,h,k].x != 1:
+                    print(f"El trabajador {j} en la hora {h} del dia {k} NO TRABAJO")
 #################################
